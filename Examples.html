@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="SSimple.js"></script>
+    <script src="SStache.js"></script>
+    <script src="Example.js"></script>
+</head>
+<body>
+    <template id="listHeaderTemplate">
+        <li value="head" style="list-style: none;"><b>Header</b></li>
+    </template>
+    <template id="listItemTemplate">
+        <li value="{{value}}">{{name}}</li>
+    </template>
+    <template id="listItem2Template">
+        <li value="{{user.value}}">{{user.name}}</li>
+    </template>
+    <template id="listItemFragment">
+        <li SS="litem" value=""></li>
+    </template>
+    <template id="listItem2Fragment">
+        <li SS="litem2" value=""></li>
+    </template>
+    <template id="addressTemplate">
+        <div SS="userid" style="margin-bottom:10px;">
+            <b>Name:</b> <span SS="name"></span><br />
+            <b>Address:</b> <span SS="address"></span><br />
+            <b>City:</b> <span SS="city"></span>, <span SS="state"></span> <b>Zipcode:</b> <span SS="zipcode" data-storage=""></span><br />
+        </div>
+    </template>
+    <ul id="mylist">
+    </ul>
+    <div id="addresses"></div>
+</body>
+</html>

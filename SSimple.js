@@ -43,8 +43,12 @@ var $$ = function() {
     const curry = fn => (...args) => fn.bind(null, ...args);
     const element = (e) => (typeof e === 'string') ? document.querySelector(e) : e;
     const find = (e, sel) => (typeof e !== 'string') ? e.querySelector(sel) : document.querySelector(e); // use first parameteer as sel
+    const create = (tag) => document.createElement(tag);
+    // const fragment = (html) => document.createRange().createContextualFragment(html);
+    const fragment = (html) => { var tpl = create('template'); tpl.innerHTML = html; return tpl.content;  };
+    const appendHtml = (e, html) => element(e).appendChild(fragment(html));
 
-    exports.oneach = (a, f) => a.foreach(f);
+    exports.oneach = (a, f) => a.forEach(f);
     exports.curry = curry;
     exports.map = curry((fn, arr) => arr.map(fn));
     exports.join = curry((str, arr) => arr.join(str));
@@ -70,15 +74,20 @@ var $$ = function() {
     exports.findtag = (e, tag) => (typeof e !== 'string') ? e.getElementsByTagName(tag) : document.getElementsByTagName(e);
 
     exports.clone = (e) => element(e).cloneNode(true);
-    exports.create = (tag) => document.createElement(tag);
-    exports.template = (t,sel) => element(t).content.querySelector(sel).cloneNode(true); 
+    exports.copy = (e) => { e = element(e); return (e.content) ? e.content.cloneNode(true) : e.cloneNode(true); };
+    exports.create = create;
+    exports.cloneContent = (e,sel) => (typeof sel === 'undefined') ? element(e).content.cloneNode(true) : element(e).content.querySelector(sel).cloneNode(true); 
+    exports.import = (e) => document.importNode(element(e), true);
+    exports.fragmentHtml = (f) => [...f.childNodes].map(n => n.outerHTML).join('\n');
 
     exports.contains = (e, child) => e != child && e.contains(child);
     exports.empty = (e) => e.innerHTML = '';
-    exports.html = (e, outer) => (outer) ? e.outerHTML : e.innerHTML;
+    exports.html = (e,v) => (typeof v === 'undefined') ? e.innerHTML : e.innerHTML = v;
     exports.text = (e,v) => (typeof v === 'undefined') ? e.textContent : e.textContent = v;
     exports.remove = (e) => e.parentNode.removeChild(e);
     exports.append = (e, c) => e.appendChild(c);
+    exports.appendHtml = appendHtml;
+    exports.fragment = fragment;
 
     exports.hasclass = (e, name) => e.classList.contains(name);
     exports.css = (e,p) => getComputedStyle(e,p);
@@ -86,6 +95,7 @@ var $$ = function() {
     exports.cssToggle = (e, rule) => e.classList.toggle(rule);
     exports.cssReplace = (e, rule, newRule) => e.classList.replace(rule, newRule);
     exports.cssDel = (e, name) => e.classList.remove(name);
+    exports.cssAdd = (e, name) => e.classList.add(name);
     exports.style = (e,n,v) => e.style[n] = v;
     exports.styleDel = (e, n) => e.style.removeProperty(n);
 
@@ -95,14 +105,13 @@ var $$ = function() {
     exports.offsetwidth = (e) => e.offsetWidth;
     exports.offsetparent = (e) => e.offsetParent || e;
     exports.bounds = (e) => e.getBoundingClientRect();
-    exports.offset = (e) => flow(
-        e.getBoundingClientRect,
-        (rect) => { 
-             return { 
+    exports.offset = (e) => {
+        var rect = e.getBoundingClientRect();
+        return { 
                 top: rect.top + document.body.scrollTop, 
-                left: rect.left + document.body.scrollLeft }; 
-            }
-        );
+                left: rect.left + document.body.scrollLeft 
+                }; 
+        };
 
     exports.parent = (e) => e.parentElement;
     exports.next = (e) => e.nextElementSibling;
@@ -110,7 +119,7 @@ var $$ = function() {
 
     exports.attr = (e, name) => e.getAttribute(name);
     exports.attrDel = (e, name) => e.removeAttribute(name);
-    exports.attrSet = (e,name,v) => e.setAttribute(e,name,v);
+    exports.attrSet = (e,name,v) => e.setAttribute(name,v);
 
     exports.hide = (e) => e.style.display = 'none';
     exports.show = (e) => e.style.display = 'block';
@@ -119,10 +128,10 @@ var $$ = function() {
 
     exports.on = (e, name, f) => e.addEventListener(name, f);
     exports.off = (e, name, f) => e.removeEventListener(name, f);
-    exports.click = (e, f) => exports.on(e, "click", f);
-    exports.mouseenter = (e, f) => exports.on(e, "mouseenter", f);
-    exports.keyup = (e, f) => exports.on(e, "keyup", f);
-    exports.keydown = (e, f) => exports.on(e, "keydown", f);
+    exports.click = (e, f) => (typeof f === 'function')? e.addEventListener('click', f) : e.dispatchEvent(new Event('click'));
+    exports.mouseenter = (e, f) => (typeof f === 'function')? e.addEventListener('mouseenter', f) : e.dispatchEvent(new Event('mouseenter'));
+    exports.keyup = (e, f) => (typeof f === 'function')? e.addEventListener('keyup', f) : e.dispatchEvent(new Event('keyup'));
+    exports.keydown = (e, f) => (typeof f === 'function')? e.addEventListener('keydown', f) : e.dispatchEvent(new Event('keydown'));;
     exports.trigger = (e, name) => (e) ? e.dispatchEvent(new Event(name)) : document.dispatchEvent(new Event(name));
     exports.ready = (f) => (document.readyState != "loading") ? f() : document.addEventListener("DOMContentLoaded", f);
 
@@ -138,11 +147,9 @@ var $$ = function() {
     exports.load = (e, url) => fetch(url)
         .then(response => response.text())
         .then(text => {
-            const parser = new DOMParser();
-            const html = parser.parseFromString(text, "text/html");
             e = element(e);
             e.innerHTML = '';
-            e.appendChild(html);
+            appendHtml(e, text);;
         });
 
 
@@ -152,7 +159,7 @@ var $$ = function() {
 
         var bound = { el: e };
 
-        for (const key in exports) {
+        for (var key in exports) {
             var value = exports[key];
             if (typeof value === "function" && CanBindElement(value)) {
                 bound[key] = value.bind(null, e);

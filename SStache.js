@@ -4,8 +4,10 @@
 // Thank you Chris Ferdinandi at https://vanillajstoolkit.com/helpers/placeholders/
 //
 var $$tache = function() {
+
+    var version = '0.5.0.0';
   
-    var exports = {};
+    var exports = { version: version };
     var defaultOptions = {
         removess: true,
         escape: true,

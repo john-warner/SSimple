@@ -5,6 +5,8 @@
 //
 var $$ = function() {
 
+    var version = '0.5.0.0';
+
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
         var ARGUMENT_NAMES = /(?:^|,)\s*([^\s,=]+)/g;
@@ -30,7 +32,7 @@ var $$ = function() {
         return parms.length > 0 && parms[0] == 'e';
     }
   
-    var exports = {};
+    var exports = { version: version };
 
     // Object manipulation
 

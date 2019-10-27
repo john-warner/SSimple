@@ -5,7 +5,7 @@
 //
 var $$ = function() {
 
-    var version = '0.5.0.0';
+     var exports = { version: '0.5.2' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -31,18 +31,28 @@ var $$ = function() {
         var parms = getFunctionParameters(func);
         return parms.length > 0 && parms[0] == 'e';
     }
-  
-    var exports = { version: version };
-
+ 
     // Object manipulation
 
     exports.extend = (target, source) => Object.assign(target, source);
 
     // Function composition
 
-    const flow = (...fns) => x => fns.reduce((v, f) => f(v), x);
-    const backflow = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
-    const curry = fn => (...args) => fn.bind(null, ...args);
+    // const flow = (...fns) => x => fns.reduce((v, f) => f(v), x);
+    // const backflow = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
+    // const curry = fn => (...args) => fn.bind(null, ...args);
+ 
+    // exports.curry = curry;
+    // exports.map = curry((fn, arr) => arr.map(fn));
+    // exports.join = curry((str, arr) => arr.join(str));
+    // exports.toLowerCase = str => str.toLowerCase();
+    // exports.split = curry((splitOn, str) => str.split(splitOn));
+
+    // exports.flow = flow;
+    // exports.backflow = backflow;
+    // exports.compose = backflow;
+
+ 
     const element = (e) => (typeof e === 'string') ? document.querySelector(e) : e;
     const find = (e, sel) => (typeof e !== 'string') ? e.querySelector(sel) : document.querySelector(e); // use first parameteer as sel
     const create = (tag) => document.createElement(tag);
@@ -51,15 +61,6 @@ var $$ = function() {
     const appendHtml = (e, html) => element(e).appendChild(fragment(html));
 
     exports.oneach = (a, f) => a.forEach(f);
-    exports.curry = curry;
-    exports.map = curry((fn, arr) => arr.map(fn));
-    exports.join = curry((str, arr) => arr.join(str));
-    exports.toLowerCase = str => str.toLowerCase();
-    exports.split = curry((splitOn, str) => str.split(splitOn));
-
-    exports.flow = flow;
-    exports.backflow = backflow;
-    exports.compose = backflow;
 
     exports.isFunction = (f) => typeof f === 'function';
     exports.isPlainObject = (o) => Object.prototype.toString.call(o) === '[object Object]';
@@ -129,6 +130,7 @@ var $$ = function() {
     // Events
 
     exports.on = (e, name, f) => e.addEventListener(name, f);
+    exports.one = (e, name, f) => e.addEventListener(name, f, { once: true });
     exports.off = (e, name, f) => e.removeEventListener(name, f);
     exports.click = (e, f) => (typeof f === 'function')? e.addEventListener('click', f) : e.dispatchEvent(new Event('click'));
     exports.mouseenter = (e, f) => (typeof f === 'function')? e.addEventListener('mouseenter', f) : e.dispatchEvent(new Event('mouseenter'));
@@ -136,6 +138,7 @@ var $$ = function() {
     exports.keydown = (e, f) => (typeof f === 'function')? e.addEventListener('keydown', f) : e.dispatchEvent(new Event('keydown'));;
     exports.trigger = (e, name) => (e) ? e.dispatchEvent(new Event(name)) : document.dispatchEvent(new Event(name));
     exports.ready = (f) => (document.readyState != "loading") ? f() : document.addEventListener("DOMContentLoaded", f);
+    exports.stop = (event) => event.stopPropagation();
 
     exports.delay = (f) => setTimeout(f, 0);
     exports.extend = (t, s) => Object.assign(t, s);

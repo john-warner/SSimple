@@ -5,21 +5,26 @@
 //
 var $$tache = function() {
 
-    var version = '0.5.0.0';
+    var version = '0.5.2';
   
     var exports = { version: version };
     var defaultOptions = {
-        removess: true,
+        removess: false,
         escape: true,
-        translate: null
+        translate: null,
+        alwaysSetTranslatedProperty: false
     };
 
     function GetValue(obj, path) {
-        var current = null;
+        var current;
+        let missing = false;
         path.split('.').forEach((o) => {
-            current = (current != null) ? current[o] : obj[o];
+            if (missing)
+                return;
+
+            current = (typeof current !== 'undefined') ? current[o] : obj[o];
             if (typeof (current) === 'undefined')
-                return current;
+                missing = true;
         });
             
         return current;
@@ -33,7 +38,7 @@ var $$tache = function() {
             return '';
     }
 
-    function IncludeAllOptions(options) {
+    function GetAllOptionSettings(options) {
         return Object.assign({...defaultOptions}, options); // make copy of options with all options
     }
 
@@ -44,7 +49,7 @@ var $$tache = function() {
     }
 
     function FillHTML(template, data, options = defaultOptions) {
-        options = IncludeAllOptions(options);
+        options = GetAllOptionSettings(options);
 
          // Check if the template is a string or a function
         template = typeof (template) === 'function' ? template() : template;
@@ -80,12 +85,33 @@ var $$tache = function() {
     };
 
     function FillDOM(dom, data, options = defaultOptions) {
-        options = IncludeAllOptions(options);
+        options = GetAllOptionSettings(options);
 
         var stached = dom.querySelectorAll("[SS]");
+        let translate = options.translate;
 
         stached.forEach((e) => {
-            FillElementWithDataTranslate(e, data[e.getAttribute("SS")],  options.translate);
+            var assignments = e.getAttribute("SS").split(';');
+
+            assignments.forEach((assignment) => {
+                var target = assignment.split(':');
+                var attribute = null;
+                var ss;
+                if (target.length > 1) {
+                    attribute = target[0];
+                    ss = target[1]
+                }
+                else {
+                    ss = assignment;
+                }
+                var value = GetValue(data, ss);
+                if (typeof value !== 'undefined') {
+                    if (attribute == null && translate && translate.hasOwnProperty(ss))
+                        attribute = translate[ss];
+
+                    FillElementWithData(e, attribute, value, data, options);
+                }
+            });
             if (options.removess)
                 e.removeAttribute("SS");
         });
@@ -93,43 +119,60 @@ var $$tache = function() {
         return dom;
     }
 
-    function FillElementWithDataTranslate(element, data, translate) {
-        if (typeof data === 'function')
-            data = data();
+    function FillElementWithData(element, attribute, data, src, options) {
+        data = GetDataValue(data, src, element);
 
-        if (typeof data === 'string') {
-            element.textContent = data;
+        if (Object.prototype.toString.call(data) === '[object Object]') {
+            FillElementWithObject(element, data, options);
         }
-        else { // should be object with attribute values
-            for (var key in data) {
-                var tkey = key;
-                var translated = false;
-                var dataValue = GetDataValue(data[key], data, element);
-
-                if (translate && translate.hasOwnProperty(key)) {
-                    tkey = translate[key];
-                    translated = true;
-                }
-
-                if (typeof element[tkey] !== 'undefined') {
-                    element[tkey] = dataValue;
-                }
-                else if (element.hasAttribute(tkey)) {
-                    element.setAttribute(tkey, dataValue);
-                }
-                else if (translated)
-                    element[tkey] = dataValue;
+        else {
+            if (attribute) {
+                if (element.hasAttribute(attribute))
+                    element.setAttribute(attribute, data);
+                else
+                    element[attribute] = data;
             }
+            else
+                element.textContent = data;
+        }
+    }
+
+    function FillElementWithObject(element, data, options) {
+        let translate = options.translate;
+
+        for (var key in data) {
+            let tkey = key;
+            let translated = false;
+            let dataValue = GetDataValue(data[key], data, element);
+
+            if (translate && translate.hasOwnProperty(key)) {
+                tkey = translate[key];
+                translated = true;
+            }
+
+            if (typeof element[tkey] !== 'undefined') {
+                element[tkey] = dataValue;
+            }
+            else if (element.hasAttribute(tkey)) {
+                element.setAttribute(tkey, dataValue);
+            }
+            else if (translated && options.alwaysSetTranslatedProperty)
+                element[tkey] = dataValue;
         }
     }
 
     function GetDataValue(data, src, element) {
-        return (typeof data === 'function') ? data(src, element) : data;
+        return (typeof data === 'function') ? data(element, src) : data;
+    }
+
+    function SetDefaultOptions(options) {
+        defaultOptions = GetAllOptionSettings(options);
     }
 
     exports.fill = Fill;
     exports.fillHTML = FillHTML;
     exports.fillDOM = FillDOM;
+    exports.options = SetDefaultOptions;
  
     return exports;
 }();

@@ -49,7 +49,7 @@ test('Test with dom fragment', function (assert) {
     var data = { value: 'Hello' };
 
     template.innerHTML = html;
-    $$tache.fill(template.content, data);
+    $$tache.fill(template.content, data, { removess: true });
 
     var result = template.innerHTML;
     var expected = "<div>Hello</div>";
@@ -63,7 +63,7 @@ test('Test dom fragment translation', function (assert) {
     var translate = { text: 'textContent' };
 
     template.innerHTML = html;
-    $$tache.fill(template.content, data, { translate: translate });
+    $$tache.fill(template.content, data, { translate: translate, removess: true });
 
     var result = template.innerHTML;
     var expected = "<div>Hello</div>";
@@ -76,9 +76,36 @@ test('Test dom fragment attribute setting', function (assert) {
     var data = { value: { class: 'bold', textContent: 'Hello' } };
 
     template.innerHTML = html;
-    $$tache.fill(template.content, data);
+    $$tache.fill(template.content, data, { removess: true });
 
     var result = template.innerHTML;
     var expected = '<div class="bold">Hello</div>'
+    assert.deepEqual(result, expected);
+});
+
+test('Test dom fragment multiple attributes', function (assert) {
+    var html = '<div ss="value;class:class" class="">{{value}}</div>';
+    var template = document.createElement("template");
+    var data = { value: 'Hello', class: 'bold' };
+
+    template.innerHTML = html;
+    $$tache.fill(template.content, data, { removess: true });
+
+    var result = template.innerHTML;
+    var expected = '<div class="bold">Hello</div>'
+    assert.deepEqual(result, expected);
+});
+
+test('Test setting event handler', function (assert) {
+    let html = '<div ss="onclick:click">Hello</div>';
+    let template = document.createElement("template");
+    let onclick = () => { alert('clicked'); }
+    let data = { click: () => onclick };
+
+    template.innerHTML = html;
+    $$tache.fill(template.content, data);
+  
+    var result = template.content.children[0].onclick;
+    var expected = onclick;
     assert.deepEqual(result, expected);
 });

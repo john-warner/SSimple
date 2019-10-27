@@ -17,63 +17,63 @@ test('Test oneach', function (assert) {
     assert.deepEqual(result, expected);
 });
 
-test('Test curry', function (assert) {
-    var curried = $$.curry((a,b) =>  a + b);
-    var result = curried(1)(2);
-    var expected = 3;
-    assert.deepEqual(result, expected);
-}); 
+// test('Test curry', function (assert) {
+//     var curried = $$.curry((a,b) =>  a + b);
+//     var result = curried(1)(2);
+//     var expected = 3;
+//     assert.deepEqual(result, expected);
+// }); 
 
-test('Test map', function (assert) {
-    var result = $$.map((v)=>v*2)([1,2,3]);
-    var expected = [2,4,6];
-    assert.deepEqual(result, expected);
-});
+// test('Test map', function (assert) {
+//     var result = $$.map((v)=>v*2)([1,2,3]);
+//     var expected = [2,4,6];
+//     assert.deepEqual(result, expected);
+// });
 
-test('Test join', function (assert) {
-    var result = $$.join('-')(['a','b','c']);
-    var expected = "a-b-c";
-    assert.deepEqual(result, expected);
-});
+// test('Test join', function (assert) {
+//     var result = $$.join('-')(['a','b','c']);
+//     var expected = "a-b-c";
+//     assert.deepEqual(result, expected);
+// });
 
-test('Test toLowerCase', function (assert) {
-    var result = $$.toLowerCase("Hello");
-    var expected = "hello";
-    assert.deepEqual(result, expected);
-});
+// test('Test toLowerCase', function (assert) {
+//     var result = $$.toLowerCase("Hello");
+//     var expected = "hello";
+//     assert.deepEqual(result, expected);
+// });
 
-test('Test split', function (assert) {
-    var result = $$.split(",")("a,b");
-    var expected = ['a','b'];
-    assert.deepEqual(result, expected);
-}); 
+// test('Test split', function (assert) {
+//     var result = $$.split(",")("a,b");
+//     var expected = ['a','b'];
+//     assert.deepEqual(result, expected);
+// }); 
 
-test('Test flow', function (assert) {
-    var result = $$.flow(
-        (s) => s.toLowerCase(), 
-        (s) => s.split(',')
-    )('a,B');
-    var expected = ['a', 'b'];
-    assert.deepEqual(result, expected);
-});
+// test('Test flow', function (assert) {
+//     var result = $$.flow(
+//         (s) => s.toLowerCase(), 
+//         (s) => s.split(',')
+//     )('a,B');
+//     var expected = ['a', 'b'];
+//     assert.deepEqual(result, expected);
+// });
 
-test('Test backflow', function (assert) {
-    var result = $$.backflow(
-        (s) => s.split(','),
-        (s) => s.toLowerCase() 
-    )('a,B');
-    var expected = ['a', 'b'];
-    assert.deepEqual(result, expected);
-});
+// test('Test backflow', function (assert) {
+//     var result = $$.backflow(
+//         (s) => s.split(','),
+//         (s) => s.toLowerCase() 
+//     )('a,B');
+//     var expected = ['a', 'b'];
+//     assert.deepEqual(result, expected);
+// });
 
-test('Test compose', function (assert) {
-    var result = $$.compose(
-        (s) => s.split(','),
-        (s) => s.toLowerCase() 
-    )('a,B');
-    var expected = ['a', 'b'];
-    assert.deepEqual(result, expected);
-});
+// test('Test compose', function (assert) {
+//     var result = $$.compose(
+//         (s) => s.split(','),
+//         (s) => s.toLowerCase() 
+//     )('a,B');
+//     var expected = ['a', 'b'];
+//     assert.deepEqual(result, expected);
+// });
 
 test('Test isFunction true', function (assert) {
     var result = $$.isFunction(() => 1);

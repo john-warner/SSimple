@@ -13,9 +13,19 @@ var SimpleExample = function() {
         { user: {name:'Jack', value:'jack'} }
     ];
     var addresses = [
-        { userid: { id: 'U1' }, name: 'John', address: '1234 Maple', city: 'Phoenix', state: 'AZ', zipcode: '85000'},
-        { userid: { id: 'U2' }, name: 'Rand', address: '1st Street Main', city: 'New York City', state: 'NY', zipcode: { style: 'color:red;', text: () => '01010', storage: 'hello'} }
+        { userid: { id: 'U1' }, name: 'John', 
+          address: '1234 Maple', city: 'Phoenix', state: 'AZ', zipcode: '85000',
+          contact: { name: 'Ken', phone: '555-5555' }},
+        { userid: { id: 'U2' }, name: 'Rand', 
+          address: '1st Street Main', city: 'New York City', state: 'NY', 
+          zipcode: { style: 'color:red;', text: () => '01010', storage: 'hello'},
+          contact: { name: { text: 'Jill', style:'color:cyan;'}, phone: '555-0000' }
+        }
     ];
+    var books = [
+        { bookid: "B1", title: 'SSimple Programming', rating: '5/5', color: 'color:red', description: 'Great programming book.' },
+        { bookid: "B2", title: 'Fun Times', rating: '4/5', color: 'color:blue', description: 'How to have fun.' }
+    ]
 
     $$.ready(Init);
     function Init() {
@@ -29,6 +39,7 @@ var SimpleExample = function() {
         PopulateList();
         PopulateList2();
         ShowAddresses();
+        ShowBooks();
      }
 
     function PopulateHead() {
@@ -48,5 +59,12 @@ var SimpleExample = function() {
         var container = $$.bind("#addresses");
         var translate = { text: 'textContent', storage: 'data-storage', id: 'id' }
         addresses.forEach((a) => { container.$$.append($$tache.fill(template.$$.copy(), a, { translate: translate }))});
+    }
+
+    function ShowBooks() {
+        var template = $$.bind("#bookTemplate");
+        var container = $$.bind("#books");
+        var translate = { bookid: 'id' };
+        books.forEach((b) => { container.$$.append($$tache.fill(template.$$.copy(), b, { translate: translate})); });
     }
 }();

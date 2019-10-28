@@ -4,9 +4,11 @@ test('Test assertions are working', function (assert) {
     assert.deepEqual(result, expected);
 }); // use deepEqual for arrays see: https://api.qunitjs.com/deepEqual/
 
+const fragmentHtml = (f) => [...f.childNodes].map(n => n.outerHTML).join('\n');
+
 test('Test html without mustache values', function (assert) {
     var html = "<div></div>";
-    var result = $$tache.fill(html);
+    var result = fragmentHtml($$tache.fill(html));
     var expected = html;
     assert.deepEqual(result, expected);
 });
@@ -14,7 +16,7 @@ test('Test html without mustache values', function (assert) {
 test('Test html with mustache values', function (assert) {
     var html = "<div>{{value}}</div>";
     var data = { value: 'Working!' };
-    var result = $$tache.fill(html, data);
+    var result = fragmentHtml($$tache.fill(html, data));
     var expected = "<div>Working!</div>";
     assert.deepEqual(result, expected);
 });
@@ -22,7 +24,7 @@ test('Test html with mustache values', function (assert) {
 test('Test with missing data values', function (assert) {
     var html = "<div>{{value}}</div>";
     var data = { };
-    var result = $$tache.fill(html, data);
+    var result = fragmentHtml($$tache.fill(html, data));
     var expected = html;
     assert.deepEqual(result, expected);
 });
@@ -30,7 +32,7 @@ test('Test with missing data values', function (assert) {
 test('Test with enabled inserted script', function (assert) {
     var html = "<div>{{value}}</div>";
     var data = { value: '<script>log.console("scripted");</script>' };
-    var result = $$tache.fill(html, data, { escape: false });
+    var result = fragmentHtml($$tache.fill(html, data, { escape: false }));
     var expected = "<div><script>log.console(\"scripted\");</script></div>";
     assert.deepEqual(result, expected);
 });
@@ -38,8 +40,8 @@ test('Test with enabled inserted script', function (assert) {
 test('Test with disabled inserted script', function (assert) {
     var html = "<div>{{value}}</div>";
     var data = { value: '<script>log.console("scripted");</script>' };
-    var result = $$tache.fill(html, data, { escape: true });
-    var expected = "<div>&lt;script&gt;log.console(&quot;scripted&quot;);&lt;/script&gt;</div>";
+    var result = fragmentHtml($$tache.fill(html, data, { escape: true }));
+    var expected = "<div>&lt;script&gt;log.console(\"scripted\");&lt;/script&gt;</div>";
     assert.deepEqual(result, expected);
 });
 

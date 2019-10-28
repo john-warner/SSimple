@@ -42,10 +42,13 @@ var $$tache = function() {
         return Object.assign({...defaultOptions}, options); // make copy of options with all options
     }
 
+    const fragment = (html) => { var tpl = document.createElement('template'); tpl.innerHTML = html; return tpl.content;  };
+
     function Fill(template, data, options = defaultOptions) {
-        return (typeof template === "string") ? 
-            FillHTML(template, data, options) :
-            FillDOM(template, data, options);
+        if (typeof template === "string")
+            template = fragment(FillHTML(template, data, options));
+
+        return FillDOM(template, data, options);
     }
 
     function FillHTML(template, data, options = defaultOptions) {

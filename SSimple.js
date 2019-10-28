@@ -138,9 +138,15 @@ var $$ = function() {
     exports.keydown = (e, f) => (typeof f === 'function')? e.addEventListener('keydown', f) : e.dispatchEvent(new Event('keydown'));;
     exports.trigger = (e, name) => (e) ? e.dispatchEvent(new Event(name)) : document.dispatchEvent(new Event(name));
     exports.ready = (f) => (document.readyState != "loading") ? f() : document.addEventListener("DOMContentLoaded", f);
-    exports.stop = (event) => event.stopPropagation();
+    exports.stop = (ev) => ev.stopPropagation();
 
     exports.delay = (f) => setTimeout(f, 0);
+    // exports.process = async (d) => {
+    //     let f = async () => await new Promise((resolve) => setTimeout(resolve, d || 0));
+    //     await f();
+    // };
+    exports.process = async (d) => await new Promise((resolve) => setTimeout(resolve, d || 0));
+
     exports.extend = (t, s) => Object.assign(t, s);
 
     exports.post = (url, data) => fetch(url, {
@@ -157,6 +163,27 @@ var $$ = function() {
             appendHtml(e, text);;
         });
 
+    // api shortcuts
+    exports.channel = (name,sf) => {
+        let bc = new BroadcastChannel(name);
+        let rc = new BroadcastChannel(name);
+        if (typeof sf === 'function') rc.onmessage = (ev) => sf(ev.data, ev);
+        return {
+            subscribe: (f) => rc.addEventListener('message', (ev) => f(ev.data, ev)),
+            send: (m) => bc.postMessage(m),
+            disconnect: () => { rc.close(); bc.close() } 
+        };
+    };
+    exports.onvisible = (e,f,o) => {
+        var w = new IntersectionObserver(f, o);
+        w.observe(e);
+        return w;
+    }
+    exports.onmutate = (e,f,o) => {
+        var w = new MutationObserver(f);
+        w.observe(e, o || {attributes: true, chiildList: true, subtree: true });
+        return w;
+    }
 
     exports.bind = (e) => { 
         if (typeof e === 'string') // passed a selector

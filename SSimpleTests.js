@@ -75,6 +75,8 @@ test('Test oneach', function (assert) {
 //     assert.deepEqual(result, expected);
 // });
 
+const delay = async () => new Promise((resolve) => setTimeout(resolve, 0));
+
 test('Test isFunction true', function (assert) {
     var result = $$.isFunction(() => 1);
     var expected = true;
@@ -483,6 +485,17 @@ test('Test on', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test one', function (assert) {
+    var dom = $$.find('#test');
+    var count = 0;
+    $$.one(dom, 'click', () => { result = '' + ++count; })
+    var result = '';
+    $$.trigger(dom, 'click');
+    $$.trigger(dom, 'click');
+    var expected = '1';
+    assert.deepEqual(result, expected);
+});
+
 test('Test off', function (assert) {
     var dom = $$.find('#test');
     var f = () => { result = "Clicked"; };
@@ -562,6 +575,28 @@ test('Test extend', function (assert) {
     var expected = { test: 1 };
     assert.deepEqual(result, expected);
 });
+
+test('Test channel and process', async function (assert) {
+    var result = "";
+    var channel = $$.channel('sstest', 
+        (m) => result = m );
+    channel.send('Success');
+    await $$.process(50);
+    var expected = "Success";
+    assert.deepEqual(result, expected);
+});
+
+// test('Test onvisible', function (assert) {
+//     var result = $$.extend({}, { test: 1 });
+//     var expected = null;
+//     assert.deepEqual(result, expected);
+// });
+
+// test('Test onmutate', function (assert) {
+//     var result = $$.extend({}, { test: 1 });
+//     var expected = null;
+//     assert.deepEqual(result, expected);
+// });
 
 // test('Test post', function (assert) {
 //     var result = 'not implemented';

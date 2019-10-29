@@ -58,7 +58,9 @@ var $$ = function() {
     const create = (tag) => document.createElement(tag);
     // const fragment = (html) => document.createRange().createContextualFragment(html);
     const fragment = (html) => { var tpl = create('template'); tpl.innerHTML = html; return tpl.content;  };
+    const fragmentHtml = (f) => [...f.childNodes].map(n => n.outerHTML).join('\n');
     const appendHtml = (e, html) => element(e).appendChild(fragment(html));
+    const isFragment = (o) => Object.prototype.toString.call(o) == "[object DocumentFragment]";
 
     exports.oneach = (a, f) => a.forEach(f);
 
@@ -66,6 +68,7 @@ var $$ = function() {
     exports.isPlainObject = (o) => Object.prototype.toString.call(o) === '[object Object]';
     exports.isArray = (a) => Array.isArray(a);
     exports.isString = (s) => typeof s === 'string';
+    exports.isFragment = isFragment;
 
     // DOM manipulation
 
@@ -81,11 +84,11 @@ var $$ = function() {
     exports.create = create;
     exports.cloneContent = (e,sel) => (typeof sel === 'undefined') ? element(e).content.cloneNode(true) : element(e).content.querySelector(sel).cloneNode(true); 
     exports.import = (e) => document.importNode(element(e), true);
-    exports.fragmentHtml = (f) => [...f.childNodes].map(n => n.outerHTML).join('\n');
+    exports.fragmentHtml = fragmentHtml;
 
     exports.contains = (e, child) => e != child && e.contains(child);
     exports.empty = (e) => e.innerHTML = '';
-    exports.html = (e,v) => (typeof v === 'undefined') ? e.innerHTML : e.innerHTML = v;
+    exports.html = (e,v) => (typeof v === 'undefined') ? ((isFragment(e)) ? fragmentHtml(e) : e.innerHTML) : e.innerHTML = v;
     exports.text = (e,v) => (typeof v === 'undefined') ? e.textContent : e.textContent = v;
     exports.remove = (e) => e.parentNode.removeChild(e);
     exports.append = (e, c) => e.appendChild(c);

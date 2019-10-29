@@ -125,6 +125,18 @@ test('Test isString false', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test isFragment true', function (assert) {
+    var result = $$.isFragment($$.fragment("<div></div>"));
+    var expected = true;
+    assert.deepEqual(result, expected);
+});
+
+test('Test isFragment false', function (assert) {
+    var result = $$.isFragment([]);
+    var expected = false;
+    assert.deepEqual(result, expected);
+});
+
 test('Test select', function (assert) {
     var result = $$.select('#test').outerHTML;
     var expected = '<div id="test"></div>';
@@ -172,7 +184,7 @@ test('Test clone', function (assert) {
 
 test('Test copy', function (assert) {
     var frag = $$.copy($$.findid("testTemplate"));
-    var result = $$.fragmentHtml(frag);
+    var result = $$.html(frag);
     var expected = "<div>Hello</div>";
     assert.deepEqual(result, expected);
 });
@@ -185,21 +197,21 @@ test('Test create', function (assert) {
 
 test('Test cloneContent', function (assert) {
     var frag = $$.cloneContent($$.findid("testTemplate"));
-    var result = $$.fragmentHtml(frag);
+    var result = $$.html(frag);
     var expected = "<div>Hello</div>";
     assert.deepEqual(result, expected);
 });
 
 test('Test import', function (assert) {
     var frag = $$.copy($$.findid("testTemplate"));
-    var result = $$.fragmentHtml(frag);
+    var result = $$.html(frag);
     var expected = "<div>Hello</div>";
     assert.deepEqual(result, expected);
 });
 
 test('Test fragmentHtml', function (assert) {
     var frag = $$.findid("testTemplate").content;
-    var result = $$.fragmentHtml(frag);
+    var result = $$.html(frag);
     var expected = "<div>Hello</div>";
     assert.deepEqual(result, expected);
 });
@@ -215,7 +227,7 @@ test('Test contains', function (assert) {
 test('Test empty', function (assert) {
     var dom = $$.copy('#testTemplate');
     $$.empty(dom.children[0]);
-    var result = $$.fragmentHtml(dom);
+    var result = $$.html(dom);
     var expected = "<div></div>";
     assert.deepEqual(result, expected);
 });
@@ -261,7 +273,7 @@ test('Test appendHtml', function (assert) {
 
 test('Test fragment', function (assert) {
     var dom = $$.fragment("<ul><li>Test</li></ul>");
-    var result = $$.fragmentHtml(dom);
+    var result = $$.html(dom);
     var expected = "<ul><li>Test</li></ul>";
     assert.deepEqual(result, expected);
 });

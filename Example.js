@@ -47,11 +47,11 @@ var SimpleExample = function() {
     }
 
     function PopulateList() {
-        data.forEach((d) => list.$$.appendHtml($$tache.fill(templateHtml, d)));
+        data.forEach((d) => list.$$.appendHtml($$tache.fillHTML(templateHtml, d)));
     }
 
     function PopulateList2() {
-        objData.forEach((d) => list.$$.appendHtml($$tache.fill(template2Html, d)));
+        objData.forEach((d) => list.$$.appendHtml($$tache.fillHTML(template2Html, d)));
     }
 
     function ShowAddresses() {

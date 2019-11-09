@@ -62,7 +62,8 @@ var $$ = function() {
     const appendHtml = (e, html) => element(e).appendChild(fragment(html));
     const isFragment = (o) => Object.prototype.toString.call(o) == "[object DocumentFragment]";
     const isString = (s) => typeof s === 'string';
- 
+    const escapeForHTML = s => s.replace(/[&<]/g, c => c === '&' ? '&amp;' : '&lt;');
+    
     exports.oneach = (a, f) => a.forEach(f);
 
     exports.isFunction = (f) => typeof f === 'function';

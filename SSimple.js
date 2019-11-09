@@ -5,7 +5,7 @@
 //
 var $$ = function() {
 
-     var exports = { version: '0.5.2' };
+     var exports = { version: '0.6.0' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -61,13 +61,14 @@ var $$ = function() {
     const fragmentHtml = (f) => [...f.childNodes].map(n => n.outerHTML).join('\n');
     const appendHtml = (e, html) => element(e).appendChild(fragment(html));
     const isFragment = (o) => Object.prototype.toString.call(o) == "[object DocumentFragment]";
-
+    const isString = (s) => typeof s === 'string';
+ 
     exports.oneach = (a, f) => a.forEach(f);
 
     exports.isFunction = (f) => typeof f === 'function';
     exports.isPlainObject = (o) => Object.prototype.toString.call(o) === '[object Object]';
     exports.isArray = (a) => Array.isArray(a);
-    exports.isString = (s) => typeof s === 'string';
+    exports.isString = isString;
     exports.isFragment = isFragment;
 
     // DOM manipulation
@@ -83,7 +84,7 @@ var $$ = function() {
     exports.copy = (e) => { e = element(e); return (e.content) ? e.content.cloneNode(true) : e.cloneNode(true); };
     exports.create = create;
     exports.cloneContent = (e,sel) => (typeof sel === 'undefined') ? element(e).content.cloneNode(true) : element(e).content.querySelector(sel).cloneNode(true); 
-    exports.import = (e) => document.importNode(element(e), true);
+    exports.import = (d,e) => d.importNode(element(e), true);
     exports.fragmentHtml = fragmentHtml;
 
     exports.contains = (e, child) => e != child && e.contains(child);
@@ -94,6 +95,9 @@ var $$ = function() {
     exports.append = (e, c) => e.appendChild(c);
     exports.appendHtml = appendHtml;
     exports.fragment = fragment;
+    exports.after = (e,h) => e.insertAdjacentHTML('afterend', h);
+    exports.before = (e,h) => e.insertAdjacentHTML('beforebegin', h);
+    exports.prepend = (e,v) => e.insertAdjacentHTML('afterbegin', v);
 
     exports.hasclass = (e, name) => e.classList.contains(name);
     exports.css = (e,p) => getComputedStyle(e,p);
@@ -123,10 +127,9 @@ var $$ = function() {
     exports.next = (e) => e.nextElementSibling;
     exports.prev = (e) => e.previousElementSibling;
 
-    exports.attr = (e, name) => e.getAttribute(name);
-    exports.attrDel = (e, name) => e.removeAttribute(name);
-    exports.attrSet = (e,name,v) => e.setAttribute(name,v);
-
+    exports.attr = (e, name, v) => (typeof v === 'undefined') ? e.getAttribute(name) : e.setAttribute(name,v);
+    exports.removeAttr = (e, name) => e.removeAttribute(name);
+ 
     exports.hide = (e) => e.style.display = 'none';
     exports.show = (e) => e.style.display = 'block';
 
@@ -148,7 +151,8 @@ var $$ = function() {
     //     let f = async () => await new Promise((resolve) => setTimeout(resolve, d || 0));
     //     await f();
     // };
-    exports.process = async (d) => await new Promise((resolve) => setTimeout(resolve, d || 0));
+    exports.sleep = (d) => { return new Promise(resolve => setTimeout(resolve, d || 0))};
+    exports.wait = async (d) => await new Promise((resolve) => setTimeout(resolve, d || 0));
 
     exports.extend = (t, s) => Object.assign(t, s);
 

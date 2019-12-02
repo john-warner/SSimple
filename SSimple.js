@@ -3,9 +3,12 @@
 // Copyright 2019 - John Warner
 // MIT Licence - use this code however you want
 //
+
+/*jshint esversion: 9 */
+
 var $$ = function() {
 
-     var exports = { version: '0.6.0' };
+     var exports = { version: '0.6.3' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -99,6 +102,39 @@ var $$ = function() {
     exports.after = (e,h) => e.insertAdjacentHTML('afterend', h);
     exports.before = (e,h) => e.insertAdjacentHTML('beforebegin', h);
     exports.prepend = (e,v) => e.insertAdjacentHTML('afterbegin', v);
+    exports.replace = (o,c) => {
+        if (Array.isArray(c)) {
+            let fragment = new DocumentFragment();
+            fragment.append(...c);
+            o.parentElement.insertBefore(fragment, o);
+        }
+        else {
+            o.parentElement.insertBefore(c, o);
+        }
+
+        o.parentNode.removeChild(o);
+    };
+    exports.waitFor = (o,p) => {
+        if (o.hasOwnProperty(p) && o[p] instanceof Promise) {
+            return o[p];
+        }
+
+        let wait = new Promise(resolve => {
+            let value;
+            if (o.hasOwnProperty(p)) {
+                resolve();
+            }
+            else {
+                Object.defineProperty(o, p, {
+                    get: () => wait,
+                    set: (v) => { Object.defineProperty(o,p, { value: v }); resolve(); },
+                    configurable: true
+                });
+            }
+        });
+
+        return wait;
+    };
 
     exports.hasclass = (e, name) => e.classList.contains(name);
     exports.css = (e,p) => getComputedStyle(e,p);
@@ -142,7 +178,7 @@ var $$ = function() {
     exports.click = (e, f) => (typeof f === 'function')? e.addEventListener('click', f) : e.dispatchEvent(new Event('click'));
     exports.mouseenter = (e, f) => (typeof f === 'function')? e.addEventListener('mouseenter', f) : e.dispatchEvent(new Event('mouseenter'));
     exports.keyup = (e, f) => (typeof f === 'function')? e.addEventListener('keyup', f) : e.dispatchEvent(new Event('keyup'));
-    exports.keydown = (e, f) => (typeof f === 'function')? e.addEventListener('keydown', f) : e.dispatchEvent(new Event('keydown'));;
+    exports.keydown = (e, f) => (typeof f === 'function')? e.addEventListener('keydown', f) : e.dispatchEvent(new Event('keydown'));
     exports.trigger = (e, name) => (e) ? e.dispatchEvent(new Event(name)) : document.dispatchEvent(new Event(name));
     exports.ready = (f) => (document.readyState != "loading") ? f() : document.addEventListener("DOMContentLoaded", f);
     exports.stop = (ev) => ev.stopPropagation();
@@ -152,7 +188,7 @@ var $$ = function() {
     //     let f = async () => await new Promise((resolve) => setTimeout(resolve, d || 0));
     //     await f();
     // };
-    exports.sleep = (d) => { return new Promise(resolve => setTimeout(resolve, d || 0))};
+    exports.sleep = (d) => { return new Promise(resolve => setTimeout(resolve, d || 0)); };
     exports.wait = async (d) => await new Promise((resolve) => setTimeout(resolve, d || 0));
 
     exports.extend = (t, s) => Object.assign(t, s);
@@ -166,9 +202,12 @@ var $$ = function() {
     exports.load = (e, url) => fetch(url)
         .then(response => response.text())
         .then(text => {
-            e = element(e);
-            e.innerHTML = '';
-            appendHtml(e, text);;
+            if (e) {
+                e = element(e);
+                e.innerHTML = '';
+                appendHtml(e, text);
+            }
+            return text;
         });
 
     // api shortcuts
@@ -179,19 +218,20 @@ var $$ = function() {
         return {
             subscribe: (f) => rc.addEventListener('message', (ev) => f(ev.data, ev)),
             send: (m) => bc.postMessage(m),
-            disconnect: () => { rc.close(); bc.close() } 
+            disconnect: () => { rc.close(); bc.close(); }
         };
     };
     exports.onvisible = (e,f,o) => {
         var w = new IntersectionObserver(f, o);
         w.observe(e);
         return w;
-    }
+    };
+
     exports.onmutate = (e,f,o) => {
         var w = new MutationObserver(f);
         w.observe(e, o || {attributes: true, chiildList: true, subtree: true });
         return w;
-    }
+    };
 
     exports.bind = (e) => { 
         if (typeof e === 'string') // passed a selector
@@ -211,6 +251,37 @@ var $$ = function() {
         e.$$ = bound;
 
         return e;
+    };
+
+    // a convenience function for parsing string namespaces and
+    // automatically generating nested namespaces
+    //
+    // ns_string : string representation of namespace.  For example, "app.controls.calendar"
+    exports.ns = (ns_string) => {
+
+        let parts = ns_string.split('.'),
+            sNamespace = parts[0],
+            parent = window[parts[0]] = window[parts[0]] || { namespace: sNamespace },    // root namespace is off of window object
+            pl, i;
+
+        if (parts.length > 1) { // create namespace hierarchy
+            parts = parts.slice(1);
+
+            pl = parts.length;
+            for (i = 0; i < pl; i++) {
+
+                sNamespace += '.' + parts[i];
+
+                //create a property if it doesnt exist
+                if (typeof parent[parts[i]] === 'undefined') {
+                    parent[parts[i]] = { namespace : sNamespace };
+                }
+
+                parent = parent[parts[i]];
+            }
+        }
+
+        return parent;
     };
 
     return exports;

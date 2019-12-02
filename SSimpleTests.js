@@ -456,17 +456,17 @@ test('Test attr', function (assert) {
     assert.deepEqual(result, expected);
 });
 
-test('Test attrDel', function (assert) {
+test('Test removeAttr', function (assert) {
     var dom = $$.fragment('<div data-test="test"></div>');
-    $$.attrDel(dom.children[0], "data-test");
+    $$.removeAttr(dom.children[0], "data-test");
     var result = $$.attr(dom.children[0], "data-test");
     var expected = null;
     assert.deepEqual(result, expected);
 });
 
-test('Test attrSet', function (assert) {
+test('Test attr set', function (assert) {
     var dom = $$.fragment('<div data-test="test"></div>');
-    $$.attrSet(dom.children[0], "data-test", "xyz");
+    $$.attr(dom.children[0], "data-test", "xyz");
     var result = $$.attr(dom.children[0], "data-test");
     var expected = 'xyz';
     assert.deepEqual(result, expected);
@@ -588,12 +588,12 @@ test('Test extend', function (assert) {
     assert.deepEqual(result, expected);
 });
 
-test('Test channel and process', async function (assert) {
+test('Test channel and sleep', async function (assert) {
     var result = "";
     var channel = $$.channel('sstest', 
         (m) => result = m );
     channel.send('Success');
-    await $$.process(50);
+    await $$.sleep(50);
     var expected = "Success";
     assert.deepEqual(result, expected);
 });
@@ -636,4 +636,37 @@ test('Test bind', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test replace', function (assert) {
+    var html = '<div><span id="test"></span></div>';
+    var template = document.createElement("template");
+    template.innerHTML = html;
+    var htmlReplace = 'Success';
+    var templateReplace = document.createElement("template");
+    templateReplace.innerHTML = htmlReplace;
+
+    $$.replace($$.find(template.content,'#test'), templateReplace.content);
+
+    var result = template.innerHTML;
+    var expected = '<div>Success</div>';
+    assert.deepEqual(result, expected);
+});
+
+test('Test waitFor', async function (assert) {
+    var result = null;
+    let obj = {};
+
+    $$.waitFor(obj, 'test').then(() => { result = 'Success'; });
+    obj.test = '';
+    await $$.sleep(50);
+
+    var expected = 'Success';
+    assert.deepEqual(result, expected);
+});
+
+test('Test ns', function (assert) {
+    $$.ns('a.b.c').test = 'Success';
+    var result = a.b.c.test;
+    var expected = 'Success';
+    assert.deepEqual(result, expected);
+});
 

@@ -670,3 +670,11 @@ test('Test ns', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test data', function (assert) {
+    var dom = $$.fragment('<div></div>');
+    $$.data(dom.children[0], "test", "Success");
+    var result = $$.data(dom.children[0], "test");
+    var expected = 'Success';
+    assert.deepEqual(result, expected);
+});
+

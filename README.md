@@ -25,6 +25,7 @@ Many of the methods are similar to jQuery, however, most do not support operatin
 * cssReplace - exchange one css rule for element with another
 * cssToggle - toggle css rule setting for element
 * cssrule - get css rule setting
+* data - get/set element data value
 * delay - call function after specified delay
 * empty - clear text/children of an element
 * extend - extend/overwite object properties
@@ -355,6 +356,19 @@ toggle css rule setting for element
 ### cssrule
 
 get css rule setting
+
+#### API call
+
+ ```javascript
+
+```
+
+**Returns**
+
+
+### data
+
+get/set element data value
 
 #### API call
 

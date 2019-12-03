@@ -8,7 +8,7 @@
 
 var $$ = function() {
 
-     var exports = { version: '0.6.3' };
+     var exports = { version: '0.6.4' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -166,7 +166,8 @@ var $$ = function() {
 
     exports.attr = (e, name, v) => (typeof v === 'undefined') ? e.getAttribute(name) : e.setAttribute(name,v);
     exports.removeAttr = (e, name) => e.removeAttribute(name);
- 
+    exports.data = (e, name, v) => (typeof v === 'undefined') ? e.getAttribute('data-'+name) : e.setAttribute('data-'+name,v);
+
     exports.hide = (e) => e.style.display = 'none';
     exports.show = (e) => e.style.display = 'block';
 

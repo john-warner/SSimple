@@ -8,7 +8,7 @@
 
 var $$ = function() {
 
-     var exports = { version: '0.6.4' };
+     var exports = { version: '0.6.5' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -234,9 +234,8 @@ var $$ = function() {
         return w;
     };
 
-    exports.bind = (e) => { 
-        if (typeof e === 'string') // passed a selector
-            e = find(e); // find element
+    exports.bind = (e, sel) => { 
+        e = find(e,sel); // find element
 
         var bound = { el: e };
 

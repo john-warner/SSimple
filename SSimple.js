@@ -8,7 +8,7 @@
 
 var $$ = function() {
 
-     var exports = { version: '0.6.5' };
+     var exports = { version: '0.6.6' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -57,7 +57,7 @@ var $$ = function() {
 
  
     const element = (e) => (typeof e === 'string') ? document.querySelector(e) : e;
-    const find = (e, sel) => (typeof e !== 'string') ? e.querySelector(sel) : document.querySelector(e); // use first parameteer as sel
+    const find = (e, sel) => (typeof e !== 'string') ? ((typeof sel === 'string') ? e.querySelector(sel) : e) : document.querySelector(e); // use first parameteer as sel
     const create = (tag) => document.createElement(tag);
     // const fragment = (html) => document.createRange().createContextualFragment(html);
     const fragment = (html) => { var tpl = create('template'); tpl.innerHTML = html; return tpl.content;  };
@@ -193,6 +193,7 @@ var $$ = function() {
     exports.wait = async (d) => await new Promise((resolve) => setTimeout(resolve, d || 0));
 
     exports.extend = (t, s) => Object.assign(t, s);
+    exports.dup = (o) => Object.assign({}, o); // needed because some browsers don't support {...o}
 
     exports.post = (url, data) => fetch(url, {
         method: 'POST',

@@ -678,3 +678,9 @@ test('Test data', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test dup', function (assert) {
+    var result = $$.dup({ success: 'Success!' });
+    var expected = { success: 'Success!' };
+    assert.deepEqual(result, expected);
+});
+

@@ -27,6 +27,7 @@ Many of the methods are similar to jQuery, however, most do not support operatin
 * cssrule - get css rule setting
 * data - get/set element data value
 * delay - call function after specified delay
+* dup - shallow duplication of plain object
 * empty - clear text/children of an element
 * extend - extend/overwite object properties
 * find - find element matching selector
@@ -382,6 +383,19 @@ get/set element data value
 ### delay
 
 call function after specified delay
+
+#### API call
+
+ ```javascript
+
+```
+
+**Returns**
+
+
+### dup
+
+shallow duplication of plain object
 
 #### API call
 

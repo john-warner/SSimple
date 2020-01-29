@@ -68,6 +68,7 @@ Many of the methods are similar to jQuery, however, most do not support operatin
 * post - post data to URL
 * prev - return previous sibling to element
 * ready - run function when document is loaded
+* redirect - redirect to a specified url
 * remove - remove child from an element
 * replace - replace element with other elements
 * select - find element in document that matches selector
@@ -925,6 +926,17 @@ run function when document is loaded
 
 **Returns**
 
+### redirect
+
+redirect to a specified url
+
+#### API call
+
+ ```javascript
+
+```
+
+**Returns**
 
 ### remove
 

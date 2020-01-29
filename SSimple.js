@@ -8,7 +8,7 @@
 
 var $$ = function() {
 
-     var exports = { version: '0.6.6' };
+     var exports = { version: '0.6.7' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -195,6 +195,7 @@ var $$ = function() {
     exports.extend = (t, s) => Object.assign(t, s);
     exports.dup = (o) => Object.assign({}, o); // needed because some browsers don't support {...o}
 
+    exports.redirect = (url,trackHistory=true) => (trackHistory) ? window.location.href = url : window.location.replace(url);
     exports.post = (url, data) => fetch(url, {
         method: 'POST',
         body: JSON.stringify(data),

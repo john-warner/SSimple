@@ -30,6 +30,7 @@ Many of the methods are similar to jQuery, however, most do not support operatin
 * dup - shallow duplication of plain object
 * empty - clear text/children of an element
 * extend - extend/overwite object properties
+* extract - extract keys from template object from another object
 * find - find element matching selector
 * findall - find all elements matching selector
 * findid - find element by id
@@ -423,6 +424,19 @@ clear text/children of an element
 ### extend
 
 extend/overwite object properties
+
+#### API call
+
+ ```javascript
+
+```
+
+**Returns**
+
+
+### extract
+
+extract keys from template object from another object
 
 #### API call
 

@@ -10,6 +10,12 @@ test('Test extend', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test extract', function (assert) {
+    var result = $$.extract({ a: null, b: null }, { d: 'gone', a: 1, b: 'test', c: 'removed' });
+    var expected = { a: 1, b: 'test' };
+    assert.deepEqual(result, expected);
+});
+
 test('Test oneach', function (assert) {
     var result = [];
     $$.oneach([1,2], (v) => result.push(v*2));

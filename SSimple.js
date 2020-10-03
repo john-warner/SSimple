@@ -1,6 +1,6 @@
 // SSimple
 // Light ES6 Javascript wrapper to ease common DOM manipulation and selection
-// Copyright 2019 - John Warner
+// Copyright 2020 - John Warner
 // MIT Licence - use this code however you want
 //
 
@@ -8,7 +8,7 @@
 
 var $$ = function() {
 
-     var exports = { version: '0.6.7' };
+     var exports = { version: '0.6.8' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -169,7 +169,7 @@ var $$ = function() {
     exports.data = (e, name, v) => (typeof v === 'undefined') ? e.getAttribute('data-'+name) : e.setAttribute('data-'+name,v);
 
     exports.hide = (e) => e.style.display = 'none';
-    exports.show = (e) => e.style.display = 'block';
+    exports.show = (e, display) => e.style.display = (typeof display !== 'undefined') ? display : 'block';
 
     // Events
 
@@ -193,6 +193,7 @@ var $$ = function() {
     exports.wait = async (d) => await new Promise((resolve) => setTimeout(resolve, d || 0));
 
     exports.extend = (t, s) => Object.assign(t, s);
+    exports.extract = (s, o) => Object.keys(s).reduce((n, k) => (n[k] = o[k], n), {});
     exports.dup = (o) => Object.assign({}, o); // needed because some browsers don't support {...o}
 
     exports.redirect = (url,trackHistory=true) => (trackHistory) ? window.location.href = url : window.location.replace(url);

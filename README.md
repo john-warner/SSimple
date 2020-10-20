@@ -73,6 +73,7 @@ Many of the methods are similar to jQuery, however, most do not support operatin
 * remove - remove child from an element
 * replace - replace element with other elements
 * select - find element in document that matches selector
+* shadow - return element shadow dom and add controls
 * show - display element
 * sleep - sleep for a specified amount of time. Returns a Promise.
 * stop - stop event propagation
@@ -1003,6 +1004,21 @@ find element in document that matches selector
 ```
 
 **Returns**
+
+
+### shadow
+
+adds elements to an element's shadow DOM
+
+#### API call
+
+ ```javascript
+
+```
+
+**Returns**
+
+ShadowRoot object of the element
 
 
 ### show

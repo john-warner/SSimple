@@ -277,6 +277,13 @@ test('Test appendHtml', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test shadow', function (assert) {
+    var dom = $$.copy("#test");
+    var shadow = $$.shadow(dom, $$.create("div"));
+    var result = $$.html(shadow);
+    var expected = "<div></div>";
+    assert.deepEqual(result, expected);
+});
 test('Test fragment', function (assert) {
     var dom = $$.fragment("<ul><li>Test</li></ul>");
     var result = $$.html(dom);

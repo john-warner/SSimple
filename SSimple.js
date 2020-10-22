@@ -8,7 +8,7 @@
 
 var $$ = function() {
 
-     var exports = { version: '0.6.9' };
+     var exports = { version: '0.6.10' };
 
     function getFunctionParameters(func) {
         var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -114,7 +114,7 @@ var $$ = function() {
 
         o.parentNode.removeChild(o);
     };
-    exports.shadow = (e, c, open = true) => { let shadow = e.attachShadow({mode: (open) ? 'open' : 'closed'}); if (c) shadow.appendChild(c); return shadow; };
+    exports.shadow = (e, c, open = true) => { let shadow = (e.shadowRoot) ? e.shadowRoot : e.attachShadow({mode: (open) ? 'open' : 'closed'}); if (c) shadow.appendChild(c); return shadow; };
     exports.waitFor = (o,p) => {
         if (o.hasOwnProperty(p) && o[p] instanceof Promise) {
             return o[p];
